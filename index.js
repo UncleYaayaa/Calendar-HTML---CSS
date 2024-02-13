@@ -1,137 +1,100 @@
-// Define global variables
-let currentMonth = 1; // February is 1-based
-let currentYear = 2024;
-let selectedDate;
-const modal = document.getElementById("taskModal");
-const closeBtn = document.getElementsByClassName("close")[0];
-
-// Function to open the modal
-function openModal(date) {
-    const modalDate = document.getElementById("modalDate");
-    modalDate.textContent = date.toDateString(); // Display the selected date in the modal
-
-    const taskListContainer = document.getElementById("taskListContainer");
-    const selectedDateSpan = document.getElementById("selectedDate");
-    selectedDateSpan.textContent = date.toDateString(); // Update selected date in task list header
-
-    taskListContainer.innerHTML = ''; // Clear previous tasks
-
-    // Retrieve tasks for the selected date from localStorage
-    const tasks = getTasksForDate(date);
-    if (tasks.length === 0) {
-        taskListContainer.innerHTML = '<p>No tasks for this date.</p>';
-    } else {
-        const taskList = document.createElement('ul');
-        taskList.id = "taskList";
-        tasks.forEach(task => {
-            const taskItem = document.createElement('li');
-            taskItem.textContent = task;
-            taskList.appendChild(taskItem);
-        });
-        taskListContainer.appendChild(taskList);
-    }
-
-    // Display the task list card
-    const taskListCard = document.querySelector('.task-list');
-    taskListCard.style.display = "block"; // Display the task list card
-
-    // Hide the modal
-    modal.style.display = "none";
-}
-
-
-// Close the modal when the user clicks outside of it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-// Function to save task for a specific date
-function saveTask(date, task) {
-    const tasks = getTasksForDate(date);
-    tasks.push(task);
-    localStorage.setItem(`task_${date.getFullYear()}_${date.getMonth() + 1}_${date.getDate()}`, JSON.stringify(tasks));
-}
-
-// Function to get tasks for a specific date from localStorage
-function getTasksForDate(date) {
-    const key = `task_${date.getFullYear()}_${date.getMonth() + 1}_${date.getDate()}`;
-    return JSON.parse(localStorage.getItem(key)) || [];
-}
-
-// Function to render the calendar
-function renderCalendar() {
-    const daysContainer = document.getElementById('daysContainer');
-    const monthYearHeader = document.getElementById('monthYear');
-    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-    const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1).getDay(); // 0-based index
-    const today = new Date(); // Current date
-
-    daysContainer.innerHTML = ''; // Clear previous content
-
-    monthYearHeader.textContent = new Date(currentYear, currentMonth - 1).toLocaleString('default', { month: 'long' }) + ' ' + currentYear;
-
-    // Add empty cells for the days before the first day of the month
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.classList.add('day');
-        daysContainer.appendChild(emptyCell);
-    }
-
-    // Add the days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayCell = document.createElement('div');
-        dayCell.textContent = day;
-        dayCell.classList.add('day');
-        dayCell.addEventListener('click', function() {
-            selectedDate = new Date(currentYear, currentMonth - 1, day);
-            openModal(selectedDate);
-        });
-
-        // Check if there is a task for the day and add icon
-        if (getTasksForDate(new Date(currentYear, currentMonth - 1, day)).length > 0) {
-            const taskIcon = document.createElement('div');
-            taskIcon.classList.add('task-icon');
-            dayCell.appendChild(taskIcon);
+// script.js
+document.addEventListener("DOMContentLoaded", function () {
+    const prevBtn = document.getElementById("prev-btn");
+    const todayBtn = document.getElementById("today-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const calendarContainer = document.getElementById("calendar-container");
+    const taskList = document.getElementById("task-list");
+  
+    // Initialize date object
+    let currentDate = new Date();
+  
+    // Render initial calendar
+    renderCalendar(currentDate);
+  
+    // Event listeners for buttons
+    prevBtn.addEventListener("click", function () {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar(currentDate);
+    });
+  
+    nextBtn.addEventListener("click", function () {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar(currentDate);
+    });
+  
+    todayBtn.addEventListener("click", function () {
+      currentDate = new Date();
+      renderCalendar(currentDate);
+    });
+  
+    // Function to render calendar
+    function renderCalendar(date) {
+      calendarContainer.innerHTML = ""; // Clear previous calendar
+  
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+      const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+      const monthName = monthNames[date.getMonth()];
+      const year = date.getFullYear();
+  
+      // Display month and year
+      const monthYearHeader = document.createElement("h3");
+      monthYearHeader.textContent = `${monthName} ${year}`;
+      calendarContainer.appendChild(monthYearHeader);
+  
+      // Create table for days
+      const table = document.createElement("table");
+      const tr = document.createElement("tr");
+  
+      // Add days of the week headers
+      for (let i = 0; i < 7; i++) {
+        const th = document.createElement("th");
+        th.textContent = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i];
+        tr.appendChild(th);
+      }
+      table.appendChild(tr);
+  
+      let dateCounter = 1;
+      // Create the calendar grid
+      for (let i = 0; i < 6; i++) {
+        const tr = document.createElement("tr");
+        for (let j = 0; j < 7; j++) {
+          const td = document.createElement("td");
+          if (i === 0 && j < firstDayOfMonth) {
+            // Empty cells before the start of the month
+            td.textContent = "";
+          } else if (dateCounter > daysInMonth) {
+            // Empty cells after the end of the month
+            td.textContent = "";
+          } else {
+            td.textContent = dateCounter;
+            td.addEventListener("click", function () {
+              displayTasks(new Date(year, date.getMonth(), dateCounter));
+            });
+            if (dateCounter === date.getDate() && date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear()) {
+              // Highlight current date
+              td.classList.add("highlight");
+            }
+            dateCounter++;
+          }
+          tr.appendChild(td);
         }
-        
-        // Highlight today's date
-        if (currentMonth === today.getMonth() + 1 && currentYear === today.getFullYear() && day === today.getDate()) {
-            dayCell.classList.add('today');
-        }
-        
-        daysContainer.appendChild(dayCell);
+        table.appendChild(tr);
+      }
+      calendarContainer.appendChild(table);
     }
-}
-
-// Function to go to the previous month
-function previousMonth() {
-    currentMonth--;
-    if (currentMonth < 1) {
-        currentMonth = 12;
-        currentYear--;
+  
+    // Function to display tasks for selected date
+    function displayTasks(selectedDate) {
+      // Example: You would fetch tasks from a database or some other data source here
+      // For this example, let's just display a sample task
+      const dateString = selectedDate.toDateString();
+      const task = `Sample Task for ${dateString}`;
+      taskList.innerHTML = `<p>${task}</p>`;
     }
-    renderCalendar();
-}
-
-// Function to go to the next month
-function nextMonth() {
-    currentMonth++;
-    if (currentMonth > 12) {
-        currentMonth = 1;
-        currentYear++;
-    }
-    renderCalendar();
-}
-
-// Function to go to today's date
-function goToToday() {
-    const today = new Date();
-    currentMonth = today.getMonth() + 1;
-    currentYear = today.getFullYear();
-    renderCalendar();
-}
-
-// Initial render of the calendar
-renderCalendar();
+  });
+  
