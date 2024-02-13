@@ -1,0 +1,134 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+/* Container styles */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* Left section styles */
+.left-section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+/* Social media cards styles */
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card img {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Middle section styles */
+.middle-section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+/* Calendar styles */
+.calendar {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 600px; /* Increase calendar height */
+}
+
+.month {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.month h2 {
+    margin: 0;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.day {
+    padding: 15px;
+    border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.day:hover {
+    background-color: #eaeaea;
+}
+
+.today {
+    background-color: #ffe6b3;
+}
+
+/* Right section styles */
+.right-section {
+    flex: 1;
+}
+
+/* Task list styles */
+.task-list {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 600px; /* Make task list section more fluid */
+    overflow-y: auto; /* Add vertical scroll if content overflows */
+}
+
+.task-list h2 {
+    margin-bottom: 10px;
+}
+
+#selectedDate {
+    font-weight: bold;
+}
+
+.task-list ul {
+    list-style-type: none;
+}
+
+.task-list li {
+    margin-bottom: 10px;
+}
