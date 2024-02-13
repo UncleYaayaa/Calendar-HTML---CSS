@@ -1,4 +1,3 @@
-// script.js
 document.addEventListener("DOMContentLoaded", function () {
     const prevBtn = document.getElementById("prev-btn");
     const todayBtn = document.getElementById("today-btn");
@@ -6,13 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const calendarContainer = document.getElementById("calendar-container");
     const taskList = document.getElementById("task-list");
   
-    // Initialize date object
     let currentDate = new Date();
-  
-    // Render initial calendar
     renderCalendar(currentDate);
   
-    // Event listeners for buttons
     prevBtn.addEventListener("click", function () {
       currentDate.setMonth(currentDate.getMonth() - 1);
       renderCalendar(currentDate);
@@ -28,10 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
       renderCalendar(currentDate);
     });
   
-    // Function to render calendar
     function renderCalendar(date) {
-      calendarContainer.innerHTML = ""; // Clear previous calendar
-  
+      calendarContainer.innerHTML = "";
       const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -41,16 +34,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const monthName = monthNames[date.getMonth()];
       const year = date.getFullYear();
   
-      // Display month and year
       const monthYearHeader = document.createElement("h3");
       monthYearHeader.textContent = `${monthName} ${year}`;
       calendarContainer.appendChild(monthYearHeader);
   
-      // Create table for days
       const table = document.createElement("table");
       const tr = document.createElement("tr");
   
-      // Add days of the week headers
       for (let i = 0; i < 7; i++) {
         const th = document.createElement("th");
         th.textContent = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][i];
@@ -59,24 +49,31 @@ document.addEventListener("DOMContentLoaded", function () {
       table.appendChild(tr);
   
       let dateCounter = 1;
-      // Create the calendar grid
+  
       for (let i = 0; i < 6; i++) {
         const tr = document.createElement("tr");
         for (let j = 0; j < 7; j++) {
           const td = document.createElement("td");
           if (i === 0 && j < firstDayOfMonth) {
-            // Empty cells before the start of the month
             td.textContent = "";
           } else if (dateCounter > daysInMonth) {
-            // Empty cells after the end of the month
             td.textContent = "";
           } else {
             td.textContent = dateCounter;
+            const selectedDate = new Date(year, date.getMonth(), dateCounter);
             td.addEventListener("click", function () {
-              displayTasks(new Date(year, date.getMonth(), dateCounter));
+              displayTasks(selectedDate);
             });
-            if (dateCounter === date.getDate() && date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear()) {
-              // Highlight current date
+            const today = new Date();
+            const todayDate = today.getDate();
+            const todayMonth = today.getMonth();
+            const todayYear = today.getFullYear();
+  
+            if (
+              dateCounter === todayDate &&
+              date.getMonth() === todayMonth &&
+              date.getFullYear() === todayYear
+            ) {
               td.classList.add("highlight");
             }
             dateCounter++;
@@ -88,13 +85,21 @@ document.addEventListener("DOMContentLoaded", function () {
       calendarContainer.appendChild(table);
     }
   
-    // Function to display tasks for selected date
     function displayTasks(selectedDate) {
-      // Example: You would fetch tasks from a database or some other data source here
-      // For this example, let's just display a sample task
-      const dateString = selectedDate.toDateString();
-      const task = `Sample Task for ${dateString}`;
-      taskList.innerHTML = `<p>${task}</p>`;
+      const dateString = selectedDate.toISOString().split("T")[0];
+      const tasks = {
+        "2024-02-12": ["Task 1", "Task 2"],
+        "2024-02-13": ["Task 3", "Task 4"],
+        // Add more task data as needed
+      };
+  
+      const taskListData = tasks[dateString] || ["No tasks for this date"];
+      taskList.innerHTML = "";
+      taskListData.forEach(task => {
+        const taskItem = document.createElement("p");
+        taskItem.textContent = task;
+        taskList.appendChild(taskItem);
+      });
     }
   });
   

@@ -36,4 +36,27 @@
   #task-list {
     margin-top: 10px;
   }
+  .social-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .social-card:hover {
+    background-color: #f0f0f0;
+  }
+
+  /* Inside styles.css */
+td {
+    cursor: pointer;
+  }
+  
+  td:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .highlight {
+    background-color: #add8e6; /* Light blue */
+  }
   
